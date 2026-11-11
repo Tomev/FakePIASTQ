@@ -1,8 +1,5 @@
 """Qiskit Aer noise model for PIAST-Q, built from a calibration snapshot."""
 
-import json
-from pathlib import Path
-
 from qiskit.quantum_info import average_gate_fidelity
 from qiskit_aer.noise import (
     NoiseModel,
@@ -15,16 +12,9 @@ from qiskit_aer.noise import (
 # AQT native gates. RZ is virtual (a frame update), so it carries no error.
 BASIS_GATES = ["r", "rz", "rxx"]
 
-# Resolves inside a source checkout (uv installs the project as editable).
-DEFAULT_CALIBRATION = (
-    Path(__file__).parents[2] / "docs" / "callibration" / "piastq_2026-09-24.json"
-)
 
-
-def fake_piastq_noise_model(
-    calibration_path: str | Path = DEFAULT_CALIBRATION,
-) -> NoiseModel:
-    """Build the PIAST-Q noise model from a calibration JSON file.
+def fake_piastq_noise_model(calibration: dict) -> NoiseModel:
+    """Build the PIAST-Q noise model from the content of a calibration JSON file.
 
     Each R and RXX gate gets thermal relaxation over its duration, followed by
     depolarizing noise sized so the total matches the reported gate fidelity
@@ -32,8 +22,7 @@ def fake_piastq_noise_model(
     a symmetric readout error from the SPAM fidelity. Idle noise and crosstalk
     are not modelled.
     """
-    with open(calibration_path) as file:
-        data = json.load(file)["vendor"]["characterisation"]
+    data = calibration["vendor"]["characterisation"]
 
     t1 = data["t1_s"]["value"]
     t2 = data["t2_coherence_time_s"]["value"]

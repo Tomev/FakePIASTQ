@@ -1,7 +1,11 @@
 # PIAST-Q noise model: assumptions and limitations
 
-`fake_piastq_noise_model()` builds a Qiskit Aer `NoiseModel` from the
-calibration snapshot in `docs/callibration/piastq_2026-09-24.json`. This
+`fake_piastq_noise_model(calibration)` builds a Qiskit Aer `NoiseModel` from
+the content of a calibration file such as
+`docs/callibration/piastq_2026-09-24.json`. `FakePiast` is an `AerSimulator`
+with that model, the device's qubit count and the native gate set, created
+with `FakePiast.from_file(path)` or `FakePiast.from_dict(calibration)`. The
+numbers quoted below are from the 2026-09-24 snapshot. This
 document records what the model contains, what was assumed to build it, and
 what it cannot represent.
 
